@@ -7,10 +7,9 @@ Garmin Connect widget for Übersicht that displays:
 - Stress average (30 days)
 - HRV average (30 days)
 
-It uses local OAuth token files stored in:
+It uses a local token file stored in:
 
-- `GarminConnect.widget/.tokens/oauth1_token.json`
-- `GarminConnect.widget/.tokens/oauth2_token.json`
+- `GarminConnect.widget/.tokens/garmin_tokens.json`
 
 `GarminConnect.widget/.tokens/` is git-ignored.
 
@@ -27,8 +26,10 @@ cd GarminConnect.widget
 ```bash
 python3 -m venv .venv
 .venv/bin/python3 -m pip install --upgrade pip
-.venv/bin/python3 -m pip install garminconnect
+.venv/bin/python3 -m pip install "garminconnect>=0.3"
 ```
+
+`garminconnect` 0.3+ is required. Older versions stored `oauth1_token.json`/`oauth2_token.json`, which 0.3 can't read; after upgrading, run `--init` once to create `garmin_tokens.json`.
 
 2. Copy the example config:
 
@@ -40,15 +41,12 @@ The widget auto-activates `.venv` if present — no need to configure a Python p
 
 You can keep `GARMIN_EMAIL` and `GARMIN_PASSWORD` in `config.env`, or only pass them during `--init`.
 
-## Initialize token files
+## Initialize the token file
 
-Recommended (avoid storing password in config file):
+Recommended — prompts for email, password and MFA code, so nothing lands in shell history:
 
 ```bash
-.venv/bin/python3 fetch-garmin.py \
-  --init \
-  --email "your_email@example.com" \
-  --password "your_password"
+.venv/bin/python3 fetch-garmin.py --init
 ```
 
 The command output includes `tokenstore` so you can confirm where tokens were saved.
@@ -71,5 +69,6 @@ This prints JSON payload with current 30-day averages and `tokenstore`.
 
 ## Notes
 
-- If MFA is required, follow prompts in terminal during `--init`.
+- If MFA is required, `--init` prompts for the code.
+- Token refreshes are saved automatically; you should only need `--init` again if Garmin revokes the session.
 - Rotate credentials if they were typed in shared terminal history.

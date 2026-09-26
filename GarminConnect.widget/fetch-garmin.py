@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import getpass
 import json
 import math
 import os
@@ -566,7 +567,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--password", help="Garmin password (overrides GARMIN_PASSWORD)")
     p.add_argument(
         "--tokenstore",
-        help="Directory where oauth token files are stored (overrides GARMIN_TOKENSTORE)",
+        help="Directory where the garmin_tokens.json token file is stored (overrides GARMIN_TOKENSTORE)",
     )
     p.add_argument("--revalidate-cache", action="store_true", help=argparse.SUPPRESS)
     p.add_argument("--revalidate-lock-file", help=argparse.SUPPRESS)
@@ -588,19 +589,24 @@ def fetch_live_payload(args: argparse.Namespace, widget_dir: Path) -> dict[str, 
     email = (args.email or os.getenv("GARMIN_EMAIL", "")).strip()
     password = (args.password or os.getenv("GARMIN_PASSWORD", "")).strip()
 
+    # --init in a terminal: prompt for anything missing so the password never
+    # has to go on the command line (and into shell history).
+    interactive = args.init and sys.stdin.isatty()
+    if interactive and not email:
+        email = input("Garmin email: ").strip()
+    if interactive and not password:
+        password = getpass.getpass("Garmin password: ").strip()
+
     try:
         from garminconnect import Garmin
     except Exception as exc:
         return {
             "status": "error",
             "message": f"Python dependency not installed: {exc}",
-            "hint": "Run: python3 -m pip install garminconnect",
+            "hint": "Run: python3 -m pip install \"garminconnect>=0.3\"",
         }
 
-    token_files_exist = (
-        (tokenstore_dir / "oauth1_token.json").exists()
-        and (tokenstore_dir / "oauth2_token.json").exists()
-    )
+    token_files_exist = (tokenstore_dir / "garmin_tokens.json").exists()
     has_credentials = bool(email and password)
 
     if not token_files_exist and not has_credentials:
@@ -608,28 +614,28 @@ def fetch_live_payload(args: argparse.Namespace, widget_dir: Path) -> dict[str, 
             "status": "error",
             "message": "No token files found and missing Garmin credentials.",
             "hint": (
-                "Use --init --email <email> --password <password> "
-                "or set GARMIN_EMAIL/GARMIN_PASSWORD in config.env."
+                "Run once in terminal: "
+                "python3 GarminConnect.widget/fetch-garmin.py --init"
             ),
             "tokenstore": str(tokenstore_dir),
         }
 
     try:
-        client = Garmin(email, password)
-        if token_files_exist:
-            client.login(tokenstore=str(tokenstore_dir))
-        else:
-            client.login()
-        if getattr(client, "garth", None) is not None:
-            client.garth.dump(str(tokenstore_dir))
+        client = Garmin(
+            email or None,
+            password or None,
+            prompt_mfa=(lambda: input("Garmin MFA code: ").strip()) if interactive else None,
+        )
+        # Loads garmin_tokens.json if present (refreshing it as needed), otherwise
+        # logs in with credentials and writes it. Refreshes are saved automatically.
+        client.login(tokenstore=str(tokenstore_dir))
     except Exception as exc:
         return {
             "status": "error",
             "message": f"Garmin login failed: {exc}",
             "hint": (
                 "Run once in terminal: "
-                "python3 GarminConnect.widget/fetch-garmin.py --init "
-                "--email <email> --password <password>"
+                "python3 GarminConnect.widget/fetch-garmin.py --init"
             ),
             "tokenstore": str(tokenstore_dir),
         }
@@ -640,7 +646,7 @@ def fetch_live_payload(args: argparse.Namespace, widget_dir: Path) -> dict[str, 
             "message": "Token setup successful.",
             "tokenstore": str(tokenstore_dir),
             "hint": (
-                "Token files created: oauth1_token.json and oauth2_token.json "
+                "Token file created: garmin_tokens.json "
                 f"in {tokenstore_dir}"
             ),
         }
