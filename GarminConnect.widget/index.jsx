@@ -249,10 +249,10 @@ export const className = `
   }
 
   ${compact(`
-    right: 880px;
+    right: 815px;
     bottom: 120px;
     width: auto;
-    & > * { zoom: 0.65; }
+    & > * { zoom: 0.625; }
   `)}
 `;
 

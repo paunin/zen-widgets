@@ -86,7 +86,7 @@ export const className = `
   ${compact(`
     right: 30px;
     bottom: 600px;
-    width: 448px;
+    width: 518px; /* matches calendar width so the border lines up with its left edge */
     & > * { zoom: 0.8; }
   `)}
 `;

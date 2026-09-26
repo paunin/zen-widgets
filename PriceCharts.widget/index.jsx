@@ -70,7 +70,7 @@ export const className = `
   }
 
   ${compact(`
-    right: 650px;
+    right: 585px;
     bottom: 120px;
     width: auto;
     & > * { zoom: 0.9; }

@@ -149,7 +149,13 @@ export const className = `
     font-weight: 700;
   }
 
+  .month-short {
+    display: none;
+  }
+
   ${compact(`
+    .month-long { display: none; }
+    .month-short { display: inline; }
     right: 30px;
     bottom: 120px;
     & > * { zoom: 0.66; }
@@ -174,7 +180,7 @@ export function render() {
   return (
     <div>
       <div className="clock">{hh}:{mm}</div>
-      <div className="date-line">{dayName}, {monthName} {dd}</div>
+      <div className="date-line">{dayName}, <span className="month-long">{monthName}</span><span className="month-short">{SHORT_MONTHS[todayMonth]}</span> {dd}</div>
       <div className="calendars">
         <MonthGrid year={prevYear} month={prevMonth} todayYear={todayYear} todayMonth={todayMonth} todayDay={dd} />
         <MonthGrid year={todayYear} month={todayMonth} todayYear={todayYear} todayMonth={todayMonth} todayDay={dd} />
