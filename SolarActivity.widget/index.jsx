@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 export const command = "python3 SolarActivity.widget/fetch-solar.py";
 
 export const refreshFrequency = 1800000; // 30 min
@@ -153,6 +155,13 @@ export const className = `
     margin-top: 4px;
     letter-spacing: 0.3px;
   }
+
+  ${compact(`
+    right: 1150px;
+    bottom: 120px;
+    width: auto;
+    & > * { zoom: 0.9; }
+  `)}
 `;
 
 export function render({ output }) {

@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 // GeekToolStyle widget - system info in GeekTool style
 // Left side, transparent background, Monaco 12
 
@@ -60,6 +62,10 @@ export const className = `
     padding-left: 1ch;
     text-align: right;
   }
+
+  ${compact(`
+    display: none;
+  `)}
 `;
 
 function bar(pct, width = 10) {

@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 // PriceCharts widget - live asset price sparkline charts
 // BTC/USD, SP500/USD, GOLD/USD
 
@@ -66,6 +68,13 @@ export const className = `
     background: rgba(0, 0, 0, 0.25);
     border-radius: 4px;
   }
+
+  ${compact(`
+    right: 650px;
+    bottom: 120px;
+    width: auto;
+    & > * { zoom: 0.9; }
+  `)}
 `;
 
 function formatPrice(val, symbol) {

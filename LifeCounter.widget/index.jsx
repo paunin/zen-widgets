@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 export const command = "[ -f LifeCounter.widget/config.env ] && . LifeCounter.widget/config.env; echo '{\"birth\":\"'\"${LIFE_BIRTH_DATE:-1988-01-01}\"'\",\"expectancy\":'\"${LIFE_EXPECTANCY:-85}\"'}'";
 
 export const refreshFrequency = 3600000;
@@ -158,6 +160,10 @@ export const className = `
     margin-top: 8px;
     text-align: center;
   }
+
+  ${compact(`
+    display: none;
+  `)}
 `;
 
 export function render({ output }) {

@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 export const command = "echo";
 export const refreshFrequency = 10000;
 
@@ -146,6 +148,12 @@ export const className = `
     color:rgb(138, 226, 255);
     font-weight: 700;
   }
+
+  ${compact(`
+    right: 30px;
+    bottom: 120px;
+    & > * { zoom: 0.66; }
+  `)}
 `;
 
 export function render() {

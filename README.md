@@ -21,6 +21,17 @@ cp config.env.example config.env
 
 `config.env` files are git-ignored so local settings stay out of version control.
 
+## Screen Sizes
+
+Widgets are laid out for a large (~2560px wide) display. On smaller displays (e.g. a 14" MacBook at 1512px) a compact layout kicks in automatically: Garmin, the clock, quotes and price charts are scaled down, and GeekToolStyle and LifeCounter are hidden.
+
+The switch lives in [lib/layout.js](lib/layout.js):
+
+- `MODE` — `"auto"` (default, picks per display), `"large"` or `"compact"` to force a layout
+- `COMPACT_MAX_WIDTH` — displays narrower than this (logical px) get the compact layout
+
+Each widget's compact overrides are in the `compact(...)` block at the end of its `className`. After editing `lib/layout.js`, use Übersicht's **Refresh All Widgets**, since changes there don't trigger a reload on their own.
+
 ## Widgets
 
 | Widget | Description | Dependencies | Config |

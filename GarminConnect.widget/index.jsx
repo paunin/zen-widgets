@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 export const command = "cd GarminConnect.widget && set -a; [ -f ./config.env ] && . ./config.env; set +a; [ -f .venv/bin/activate ] && . .venv/bin/activate; python3 fetch-garmin.py";
 
 export const refreshFrequency = 1800000; // 30 min
@@ -245,6 +247,13 @@ export const className = `
     flex-wrap: wrap;
     gap: 6px 10px;
   }
+
+  ${compact(`
+    right: 880px;
+    bottom: 120px;
+    width: auto;
+    & > * { zoom: 0.65; }
+  `)}
 `;
 
 function fmtNum(val) {

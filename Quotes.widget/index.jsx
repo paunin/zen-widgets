@@ -1,3 +1,5 @@
+import { compact } from "../lib/layout.js";
+
 export const command = `
   python3 - <<'PY'
 import json
@@ -80,6 +82,13 @@ export const className = `
     color: rgba(255, 255, 255, 0.45);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   }
+
+  ${compact(`
+    right: 30px;
+    bottom: 600px;
+    width: 448px;
+    & > * { zoom: 0.8; }
+  `)}
 `;
 
 export function render({ output }) {
